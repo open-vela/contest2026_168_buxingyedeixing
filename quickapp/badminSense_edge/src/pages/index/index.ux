@@ -1,0 +1,24 @@
+<template>
+  <scroll class="page" scroll-y="true"><div class="container">
+    <div class="top-row"><div class="status-dot"></div><text class="status">系统就绪</text><image src="/common/images/icon-settings.png" class="small-icon" onclick="goSettings" /></div>
+    <image src="/common/logo.png" class="logo" /><text class="title">BadminSense</text><text class="subtitle">腕上羽毛球智能监测</text>
+    <div if="{{lastWorkout}}" class="last-card"><text class="card-label">最近训练</text><div class="card-row"><text class="card-value">{{formatDuration(lastWorkout.activeDuration)}}</text><text class="card-value green">{{lastWorkout.hits.total}} 次</text></div></div>
+    <div class="primary" onclick="startWorkout"><image src="/common/images/icon-start.png" class="button-icon" /><text class="primary-text">开始运动</text></div>
+    <div class="secondary" onclick="goHistory"><image src="/common/images/icon-history.png" class="button-icon" /><text class="secondary-text">历史记录</text></div>
+  </div></scroll>
+</template>
+<style>
+.page { width: 100%; height: 100%; background-color: #0b1020; }.container { width: 100%; min-height: 480px; padding: 42px 48px; flex-direction: column; align-items: center; }.top-row { width: 100%; height: 38px; flex-direction: row; align-items: center; }.status-dot { width: 10px; height: 10px; border-radius: 5px; background-color: #30e18b; margin-right: 8px; }.status { color: #8fa1bd; font-size: 20px; flex: 1; }.small-icon { width: 30px; height: 30px; }.logo { width: 86px; height: 86px; margin-top: 2px; }.title { color: #ffffff; font-size: 36px; font-weight: bold; margin-top: 8px; }.subtitle { color: #8fa1bd; font-size: 20px; margin-top: 4px; margin-bottom: 18px; }.last-card { width: 100%; padding: 14px 20px; border-radius: 18px; background-color: #151d33; flex-direction: column; margin-bottom: 16px; }.card-label { color: #8fa1bd; font-size: 18px; }.card-row { width: 100%; flex-direction: row; justify-content: space-between; margin-top: 5px; }.card-value { color: #ffffff; font-size: 24px; font-weight: bold; }.green { color: #30e18b; }.primary, .secondary { width: 100%; height: 58px; border-radius: 29px; flex-direction: row; align-items: center; justify-content: center; }.primary { background-color: #30e18b; margin-bottom: 12px; }.secondary { background-color: #202a43; }.button-icon { width: 25px; height: 25px; margin-right: 10px; }.primary-text { color: #08130e; font-size: 25px; font-weight: bold; }.secondary-text { color: #ffffff; font-size: 23px; }
+</style>
+<script>
+import router from '@system.router'
+import dataStore from '../../common/data-store'
+import workoutSession from '../../common/workout-session'
+export default {
+  private: { lastWorkout: null },
+  onShow() { dataStore.loadLastWorkout(record => { this.lastWorkout = record }) },
+  startWorkout() { dataStore.loadSettings(settings => { workoutSession.start(settings); router.push({ uri: '/pages/workout/overview' }) }) },
+  goHistory() { router.push({ uri: '/pages/history' }) }, goSettings() { router.push({ uri: '/pages/settings' }) },
+  formatDuration(seconds) { const value = Number(seconds) || 0; return `${Math.floor(value / 60)} 分 ${value % 60} 秒` }
+}
+</script>

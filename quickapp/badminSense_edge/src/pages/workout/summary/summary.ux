@@ -1,0 +1,25 @@
+<template><scroll class="page" scroll-y="true"><div class="container">
+  <text class="title">{{readOnly ? '训练详情' : '运动完成'}}</text><text class="date">{{formatDate(record.startTime)}} · {{sourceLabel}}</text>
+  <div class="hero"><text class="time">{{formatDuration(record.activeDuration)}}</text><text class="muted">有效运动时长</text></div>
+  <div class="row"><div class="card"><text class="value green">{{record.hits.total}}</text><text class="muted">击球</text></div><div class="card"><text class="value">{{record.calories.value}}</text><text class="muted">千卡</text></div><div class="card"><text class="value red">{{heartRate}}</text><text class="muted">平均心率</text></div></div>
+  <div class="shot-row"><text>高远 {{record.hits.highClear}}</text><text>杀球 {{record.hits.smash}}</text><text>平抽 {{record.hits.drive}}</text></div><div class="shot-row"><text>挑球 {{record.hits.lift}}</text><text>吊球 {{record.hits.drop}}</text><text>未知 {{record.hits.unknown}}</text></div>
+  <div if="{{!readOnly}}" class="actions"><div class="save" onclick="save"><text class="button-text dark">保存记录</text></div><div class="discard" onclick="discard"><text class="button-text">放弃</text></div></div>
+  <div if="{{readOnly}}" class="back-button" onclick="goBack"><text class="button-text">返回历史</text></div>
+</div></scroll></template>
+<style>
+.page{width:100%;height:100%;background-color:#0b1020}.container{width:100%;padding:42px 36px 60px;align-items:center;flex-direction:column}.title{color:#fff;font-size:32px;font-weight:bold}.date,.muted{color:#8fa1bd;font-size:17px}.hero{width:100%;align-items:center;flex-direction:column;background-color:#151d33;border-radius:20px;padding:17px;margin:14px 0}.time{color:#30e18b;font-size:52px;font-weight:bold}.row,.shot-row,.actions{width:100%;flex-direction:row}.card{flex:1;align-items:center;flex-direction:column;margin:0 4px}.value{color:#fff;font-size:27px;font-weight:bold}.green{color:#30e18b}.red{color:#ff647c}.shot-row{background-color:#151d33;padding:11px 15px;justify-content:space-between;color:#d9e1ef;font-size:17px}.actions{margin-top:18px}.save,.discard,.back-button{height:54px;border-radius:27px;align-items:center;justify-content:center}.save{flex:2;background-color:#30e18b;margin-right:8px}.discard{flex:1;background-color:#202a43}.back-button{width:100%;background-color:#202a43;margin-top:18px}.button-text{color:#fff;font-size:22px;font-weight:bold}.dark{color:#08130e}
+</style>
+<script>
+import router from '@system.router'
+import prompt from '@system.prompt'
+import dataStore from '../../../common/data-store'
+import workoutSession from '../../../common/workout-session'
+export default {
+  public:{workoutData:null,readOnly:false},private:{record:{startTime:0,activeDuration:0,hits:{total:0,highClear:0,smash:0,drive:0,lift:0,drop:0,unknown:0},calories:{value:0},heartRate:{avg:null}},sourceLabel:'模拟数据',heartRate:'--'},
+  onInit(){if(typeof this.workoutData==='string'){try{this.record=JSON.parse(this.workoutData)}catch(error){}}else if(this.workoutData){this.record=this.workoutData}else if(workoutSession.record){this.record=workoutSession.record}this.readOnly=this.readOnly===true||this.readOnly==='true';this.sourceLabel=this.record.dataSource==='mock'?'模拟数据':'真机数据';this.heartRate=this.record.heartRate.avg===null?'--':this.record.heartRate.avg},
+  formatDate(timestamp){const date=new Date(timestamp||Date.now());return `${date.getFullYear()}-${(date.getMonth()+1).toString().padStart(2,'0')}-${date.getDate().toString().padStart(2,'0')}`},
+  formatDuration(seconds){const value=Number(seconds)||0;return `${Math.floor(value/60).toString().padStart(2,'0')}:${(value%60).toString().padStart(2,'0')}`},
+  save(){dataStore.saveWorkout(this.record,()=>{prompt.showToast({message:'训练记录已保存'});workoutSession.discard();router.replace({uri:'/pages/index'})},()=>prompt.showToast({message:'保存失败，请重试'}))},
+  discard(){workoutSession.discard();router.replace({uri:'/pages/index'})},goBack(){router.back()}
+}
+</script>

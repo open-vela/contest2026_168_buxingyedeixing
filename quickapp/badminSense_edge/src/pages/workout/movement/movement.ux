@@ -1,0 +1,14 @@
+<template><div class="page"><div class="container"><text class="title">移动记录</text><text class="source">{{sourceLabel}}</text>
+  <div class="main"><text class="steps">{{record.movement.steps}}</text><text class="muted">步数</text></div>
+  <div class="row"><div class="card"><text class="value">{{record.movement.distance}}</text><text class="muted">距离 km</text></div><div class="card"><text class="value">{{record.movement.avgSpeed}}</text><text class="muted">均速 km/h</text></div></div>
+  <div class="row"><div class="card"><text class="value">{{record.movement.maxSpeed}}</text><text class="muted">最高速 km/h</text></div><div class="card"><text class="value green">{{record.calories.value}}</text><text class="muted">千卡</text></div></div>
+  <div class="nav"><text class="dot" onclick="goOverview">●</text><text class="dot" onclick="goHits">●</text><text class="dot active">●</text></div>
+</div></div></template>
+<style>
+.page{width:100%;height:100%;background-color:#0b1020}.container{width:100%;height:100%;padding:42px 42px;align-items:center;flex-direction:column}.title{color:#fff;font-size:32px;font-weight:bold}.source{color:#f2b94b;font-size:17px;margin-top:4px}.main{align-items:center;flex-direction:column;margin:15px 0}.steps{color:#30e18b;font-size:66px;font-weight:bold}.muted{color:#8fa1bd;font-size:18px}.row{width:100%;flex-direction:row;margin-bottom:12px}.card{flex:1;background-color:#151d33;border-radius:18px;padding:18px;margin:0 6px;align-items:center;flex-direction:column}.value{color:#fff;font-size:30px;font-weight:bold}.green{color:#30e18b}.nav{flex-direction:row;margin-top:10px}.dot{color:#34405b;font-size:20px;margin:0 8px}.active{color:#30e18b}
+</style>
+<script>
+import router from '@system.router'
+import workoutSession from '../../../common/workout-session'
+export default {private:{record:{movement:{steps:0,distance:0,avgSpeed:0,maxSpeed:0},calories:{value:0}},sourceLabel:'模拟数据'},onInit(){this.listener=state=>{this.record=state.record;this.sourceLabel=state.record.dataSource==='mock'?'模拟数据':'真机数据'};workoutSession.subscribe(this.listener)},onDestroy(){workoutSession.unsubscribe(this.listener)},goOverview(){router.push({uri:'/pages/workout/overview'})},goHits(){router.push({uri:'/pages/workout/hits'})}}
+</script>

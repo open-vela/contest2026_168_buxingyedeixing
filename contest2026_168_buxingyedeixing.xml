@@ -11,6 +11,7 @@
   <project path="contest2026_168_buxingyedeixing" name="contest2026_168_buxingyedeixing">
     <linkfile src="app/hello_app" dest="packages/demos/contest2026_168_hello_app"/>
     <linkfile src="quickapp/hello_quickapp" dest="packages/apps/contest2026_168_hello_quickapp"/>
+    <linkfile src="quickapp/badminSense_edge" dest="packages/apps/contest2026_168_badminSense_edge"/>
     <linkfile src="board/contest_board" dest="vendor/openvela/boards/contest2026_168_board"/>
   </project>
 </manifest>
