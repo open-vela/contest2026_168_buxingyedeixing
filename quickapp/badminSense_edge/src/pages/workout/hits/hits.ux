@@ -1,0 +1,16 @@
+<template><scroll class="page" scroll-y="true"><div class="container">
+  <text class="title">击球记录</text><text class="source">{{sourceLabel}}</text>
+  <text class="total">{{record.hits.total}}</text><text class="muted">总击球数</text>
+  <div class="latest"><text class="latest-label">最新击球</text><text class="latest-value">{{latestLabel}}</text><text class="confidence">置信度 {{latestConfidence}}%</text></div>
+  <div class="grid"><div class="item"><text class="number">{{record.hits.highClear}}</text><text class="name">高远球</text></div><div class="item"><text class="number">{{record.hits.smash}}</text><text class="name">杀球</text></div><div class="item"><text class="number">{{record.hits.drive}}</text><text class="name">平抽</text></div></div>
+  <div class="grid"><div class="item"><text class="number">{{record.hits.lift}}</text><text class="name">挑球</text></div><div class="item"><text class="number">{{record.hits.drop}}</text><text class="name">吊球</text></div><div class="item"><text class="number">{{record.hits.unknown}}</text><text class="name">未识别</text></div></div>
+  <div class="nav"><text class="dot" onclick="goOverview">●</text><text class="dot active">●</text><text class="dot" onclick="goMovement">●</text></div>
+</div></scroll></template>
+<style>
+.page{width:100%;height:100%;background-color:#0b1020}.container{width:100%;padding:42px 38px;align-items:center;flex-direction:column}.title{color:#fff;font-size:32px;font-weight:bold}.source{color:#f2b94b;font-size:17px;margin-top:4px}.total{color:#30e18b;font-size:68px;font-weight:bold;margin-top:8px}.muted,.name,.latest-label{color:#8fa1bd;font-size:18px}.latest{width:100%;padding:13px 18px;background-color:#151d33;border-radius:16px;flex-direction:row;align-items:center;margin:12px 0}.latest-label{flex:1}.latest-value{color:#fff;font-size:22px;font-weight:bold}.confidence{color:#30e18b;font-size:16px;margin-left:9px}.grid{width:100%;flex-direction:row;margin-bottom:9px}.item{flex:1;background-color:#151d33;border-radius:14px;margin:0 5px;padding:11px;align-items:center;flex-direction:column}.number{color:#fff;font-size:28px;font-weight:bold}.nav{flex-direction:row;margin-top:8px}.dot{color:#34405b;font-size:20px;margin:0 8px}.active{color:#30e18b}
+</style>
+<script>
+import router from '@system.router'
+import workoutSession from '../../../common/workout-session'
+export default { private:{record:{hits:{total:0,highClear:0,smash:0,drive:0,lift:0,drop:0,unknown:0}},sourceLabel:'模拟数据',latestLabel:'等待挥拍',latestConfidence:0}, onInit(){this.listener=state=>{this.record=state.record;this.sourceLabel=state.record.dataSource==='mock'?'模拟数据':'真机数据';const shot=state.record.latestShot;this.latestLabel=shot?shot.label:'等待挥拍';this.latestConfidence=shot?shot.confidence:0};workoutSession.subscribe(this.listener)},onDestroy(){workoutSession.unsubscribe(this.listener)},goOverview(){router.push({uri:'/pages/workout/overview'})},goMovement(){router.push({uri:'/pages/workout/movement'})} }
+</script>

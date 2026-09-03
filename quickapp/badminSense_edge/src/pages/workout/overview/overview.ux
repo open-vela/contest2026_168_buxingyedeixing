@@ -1,0 +1,53 @@
+<template>
+  <div class="page">
+    <swiper class="swiper" index="{{currentPage}}" indicator="false" onchange="onSwipeChange">
+      <div class="slide"><div class="container">
+        <div class="badge"><text class="badge-text">{{sourceLabel}}</text></div>
+        <text class="state">{{statusLabel}}</text>
+        <text class="time">{{timeText}}</text><text class="muted">有效运动时长</text>
+        <div class="metrics"><div class="metric"><text class="value red">{{heartRate}}</text><text class="label">心率 bpm</text></div><div class="metric"><text class="value green">{{calories}}</text><text class="label">千卡</text></div></div>
+        <div class="nav"><text class="dot active">●</text><text class="dot">●</text><text class="dot">●</text></div>
+      </div></div>
+      <div class="slide"><scroll class="slide-scroll" scroll-y="true"><div class="container hits-container">
+        <text class="title">击球记录</text><text class="source">{{sourceLabel}}</text>
+        <text class="total">{{hits.total}}</text><text class="muted">总击球数</text>
+        <div class="latest"><text class="latest-label">最新</text><text class="latest-value">{{latestLabel}}</text><text class="confidence">{{latestConfidence}}%</text></div>
+        <div class="grid"><div class="item"><text class="number">{{hits.highClear}}</text><text class="name">高远</text></div><div class="item"><text class="number">{{hits.smash}}</text><text class="name">杀球</text></div><div class="item"><text class="number">{{hits.drive}}</text><text class="name">平抽</text></div></div>
+        <div class="grid"><div class="item"><text class="number">{{hits.lift}}</text><text class="name">挑球</text></div><div class="item"><text class="number">{{hits.drop}}</text><text class="name">吊球</text></div><div class="item"><text class="number">{{hits.unknown}}</text><text class="name">未知</text></div></div>
+        <div class="nav"><text class="dot">●</text><text class="dot active">●</text><text class="dot">●</text></div>
+      </div></scroll></div>
+      <div class="slide"><div class="container">
+        <text class="title">移动记录</text><text class="source">{{sourceLabel}}</text>
+        <div class="main"><text class="steps">{{movement.steps}}</text><text class="muted">步数</text></div>
+        <div class="grid"><div class="move-card"><text class="move-value">{{movement.distance}}</text><text class="name">距离 km</text></div><div class="move-card"><text class="move-value">{{movement.avgSpeed}}</text><text class="name">均速 km/h</text></div></div>
+        <div class="grid"><div class="move-card"><text class="move-value">{{movement.maxSpeed}}</text><text class="name">最高速</text></div><div class="move-card"><text class="move-value green">{{calories}}</text><text class="name">千卡</text></div></div>
+        <div class="nav"><text class="dot">●</text><text class="dot">●</text><text class="dot active">●</text></div>
+      </div></div>
+    </swiper>
+    <div class="actions"><div class="pause" onclick="togglePause"><text class="action-text">{{pauseLabel}}</text></div><div class="stop" onclick="endWorkout"><text class="action-text">结束</text></div></div>
+  </div>
+</template>
+<style>
+.page{width:100%;height:100%;background-color:#0b1020;flex-direction:column}.swiper{width:100%;height:398px}.slide,.slide-scroll{width:100%;height:398px}.container{width:100%;height:398px;padding:38px 40px 16px;flex-direction:column;align-items:center}.hits-container{padding-top:30px}.badge{padding:7px 16px;border-radius:16px;background-color:#473818}.badge-text,.source{color:#f2b94b;font-size:17px}.state{color:#30e18b;font-size:24px;margin-top:9px}.time{color:#fff;font-size:68px;font-weight:bold;margin-top:14px}.muted,.label,.name,.latest-label{color:#8fa1bd;font-size:17px}.metrics{width:100%;flex-direction:row;margin-top:25px}.metric{flex:1;align-items:center;flex-direction:column}.value{font-size:36px;font-weight:bold}.red{color:#ff647c}.green{color:#30e18b}.nav{flex-direction:row;margin-top:16px}.dot{color:#34405b;font-size:19px;margin:0 8px}.active{color:#30e18b}.actions{width:100%;height:82px;flex-direction:row;padding:12px 40px;background-color:#0b1020}.pause,.stop{flex:1;height:56px;border-radius:28px;align-items:center;justify-content:center;margin:0 6px}.pause{background-color:#27344f}.stop{background-color:#d94b5c}.action-text{color:#fff;font-size:23px;font-weight:bold}.title{color:#fff;font-size:30px;font-weight:bold}.total,.steps{color:#30e18b;font-size:58px;font-weight:bold;margin-top:5px}.latest{width:100%;padding:10px 16px;background-color:#151d33;border-radius:15px;flex-direction:row;align-items:center;margin:8px 0}.latest-label{flex:1}.latest-value{color:#fff;font-size:20px;font-weight:bold}.confidence{color:#30e18b;font-size:16px;margin-left:8px}.grid{width:100%;flex-direction:row;margin-bottom:8px}.item,.move-card{flex:1;background-color:#151d33;border-radius:13px;margin:0 4px;padding:9px;align-items:center;flex-direction:column}.number{color:#fff;font-size:25px;font-weight:bold}.main{align-items:center;flex-direction:column;margin:12px 0}.move-card{padding:16px 8px}.move-value{color:#fff;font-size:28px;font-weight:bold}
+</style>
+<script>
+import router from '@system.router'
+import workoutSession from '../../../common/workout-session'
+export default {
+  private:{currentPage:0,timeText:'00:00',statusLabel:'运动中',pauseLabel:'暂停',sourceLabel:'模拟数据',heartRate:'--',calories:0,hits:{total:0,highClear:0,smash:0,drive:0,lift:0,drop:0,unknown:0},movement:{steps:0,distance:0,avgSpeed:0,maxSpeed:0},latestLabel:'等待挥拍',latestConfidence:0},
+  onInit(){
+    this.listener=state=>{const record=state.record;if(!record)return;this.timeText=this.formatDuration(record.activeDuration);this.statusLabel=record.status==='paused'?'已暂停':'运动中';this.pauseLabel=record.status==='paused'?'继续':'暂停';this.sourceLabel=record.dataSource==='mock'?'模拟数据':'真机数据';this.heartRate=record.heartRate.current===null?'--':record.heartRate.current;this.calories=record.calories.value;this.hits=Object.assign({},record.hits);this.movement=Object.assign({},record.movement);this.latestLabel=record.latestShot?record.latestShot.label:'等待挥拍';this.latestConfidence=record.latestShot?record.latestShot.confidence:0};
+    workoutSession.subscribe(this.listener)
+    this.pageTimer=setInterval(()=>{workoutSession.tick()},1000)
+  },
+  onDestroy(){if(this.pageTimer)clearInterval(this.pageTimer);workoutSession.unsubscribe(this.listener)},
+  onSwipeChange(event){this.currentPage=event.index},
+  formatDuration(seconds){const value=Number(seconds)||0;return `${Math.floor(value/60).toString().padStart(2,'0')}:${(value%60).toString().padStart(2,'0')}`},
+  togglePause(){
+    this.pauseLabel=this.pauseLabel==='暂停'?'继续':'暂停'
+    this.statusLabel=this.pauseLabel==='继续'?'已暂停':'运动中'
+    workoutSession.togglePause()
+  },
+  endWorkout(){const record=workoutSession.finish();router.push({uri:'/pages/workout/summary',params:{workoutData:JSON.stringify(record),readOnly:false}})}
+}
+</script>

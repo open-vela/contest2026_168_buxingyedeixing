@@ -1,0 +1,27 @@
+<template>
+  <scroll class="page" scroll-y="true"><div class="container">
+    <div class="header"><image src="/common/images/icon-back.png" class="back" onclick="goBack" /><text class="title">训练设置</text></div>
+    <div class="section"><text class="label">数据来源</text><div class="choices"><text class="{{settings.mockMode ? 'active' : 'choice'}}" onclick="setMock(true)">模拟器</text><text class="{{!settings.mockMode ? 'active' : 'choice'}}" onclick="setMock(false)">真机</text></div><text if="{{settings.mockMode}}" class="hint">模拟数据会在运动页持续标识</text></div>
+    <div class="section"><text class="label">检测灵敏度</text><div class="choices"><text class="{{settings.sensitivity === 'low' ? 'active' : 'choice'}}" onclick="setSensitivity('low')">低</text><text class="{{settings.sensitivity === 'medium' ? 'active' : 'choice'}}" onclick="setSensitivity('medium')">中</text><text class="{{settings.sensitivity === 'high' ? 'active' : 'choice'}}" onclick="setSensitivity('high')">高</text></div></div>
+    <div class="section row"><text class="label grow">体重</text><text class="round" onclick="weightDown">−</text><text class="value">{{settings.weight}} kg</text><text class="round" onclick="weightUp">＋</text></div>
+    <div class="section"><text class="label">惯用手</text><div class="choices"><text class="{{settings.dominantHand === 'left' ? 'active' : 'choice'}}" onclick="setHand('left')">左手</text><text class="{{settings.dominantHand === 'right' ? 'active' : 'choice'}}" onclick="setHand('right')">右手</text></div></div>
+    <div class="section row"><text class="label grow">心率预警</text><text class="round" onclick="heartDown">−</text><text class="value">{{settings.heartRateWarning}}</text><text class="round" onclick="heartUp">＋</text></div>
+    <text class="version">BadminSense-Edge · 1.0.0</text>
+  </div></scroll>
+</template>
+<style>
+.page { width: 100%; height: 100%; background-color: #0b1020; }.container { width: 100%; padding: 42px 40px 60px; flex-direction: column; }.header, .row, .choices { flex-direction: row; align-items: center; }.header { margin-bottom: 18px; }.back { width: 32px; height: 32px; margin-right: 14px; }.title { color: #ffffff; font-size: 32px; font-weight: bold; }.section { width: 100%; background-color: #151d33; border-radius: 18px; padding: 18px; margin-bottom: 12px; flex-direction: column; }.section.row { flex-direction: row; }.label { color: #ffffff; font-size: 23px; margin-bottom: 10px; }.grow { flex: 1; }.choices { width: 100%; }.choice, .active { flex: 1; text-align: center; font-size: 20px; padding: 10px; border-radius: 16px; margin-right: 8px; }.choice { color: #8fa1bd; background-color: #202a43; }.active { color: #07130d; background-color: #30e18b; font-weight: bold; }.hint { color: #f2b94b; font-size: 17px; margin-top: 10px; }.round { width: 40px; height: 40px; text-align: center; padding-top: 6px; border-radius: 20px; color: #ffffff; background-color: #202a43; font-size: 24px; }.value { width: 82px; text-align: center; color: #30e18b; font-size: 22px; }.version { color: #65738c; text-align: center; font-size: 18px; margin-top: 12px; }
+</style>
+<script>
+import router from '@system.router'
+import dataStore from '../../common/data-store'
+import { DEFAULT_SETTINGS } from '../../common/constants'
+export default {
+  private: { settings: Object.assign({}, DEFAULT_SETTINGS) },
+  onInit() { dataStore.loadSettings(settings => { this.settings = settings }) },
+  save() { this.settings = Object.assign({}, this.settings); dataStore.saveSettings(this.settings) },
+  setMock(value) { this.settings.mockMode = value; this.save() }, setSensitivity(value) { this.settings.sensitivity = value; this.save() }, setHand(value) { this.settings.dominantHand = value; this.save() },
+  weightDown() { this.settings.weight = Math.max(35, this.settings.weight - 1); this.save() }, weightUp() { this.settings.weight = Math.min(150, this.settings.weight + 1); this.save() },
+  heartDown() { this.settings.heartRateWarning = Math.max(100, this.settings.heartRateWarning - 5); this.save() }, heartUp() { this.settings.heartRateWarning = Math.min(220, this.settings.heartRateWarning + 5); this.save() }, goBack() { router.back() }
+}
+</script>

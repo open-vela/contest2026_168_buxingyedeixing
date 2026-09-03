@@ -1,0 +1,33 @@
+{
+  "schema_version": "1.0",
+  "team_id": "contest2026_168_buxingyedeixing",
+  "github_login": "saber8899110-arch",
+  "generator": "claude-code-collector@1.2.0",
+  "updated_at": "2026-08-12T09:31:18.322Z",
+  "sessions": [
+    {
+      "session_id": "c8c011ae-e23d-43d1-a866-407bf5daf7da",
+      "tool": "claude-code",
+      "started_at": "2026-08-12T08:14:26.753Z",
+      "last_event_at": "2026-08-12T08:21:01.530Z",
+      "event_count": 72,
+      "raw_event_count": 102,
+      "file_path": "logs/saber8899110-arch/2026-08-12/claude-code__c8c011ae-e23d-43d1-a866-407bf5daf7da.jsonl",
+      "collection_mode": "cli",
+      "health": "ok",
+      "model": "mimo-v2.5"
+    },
+    {
+      "session_id": "fecab807-9e49-4c71-9550-abf694aab012",
+      "tool": "claude-code",
+      "started_at": "2026-08-12T08:33:19.128Z",
+      "last_event_at": "2026-08-12T09:31:18.315Z",
+      "event_count": 314,
+      "raw_event_count": 501,
+      "file_path": "logs/saber8899110-arch/2026-08-12/claude-code__fecab807-9e49-4c71-9550-abf694aab012.jsonl",
+      "collection_mode": "cli",
+      "health": "ok",
+      "model": "mimo-v2.5"
+    }
+  ]
+}
